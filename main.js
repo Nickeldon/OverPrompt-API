@@ -6,7 +6,7 @@
   const readline = require('readline');
   const ffmpeg = require('ffmpeg-static');
   const prompt = require('prompt-sync')({sigint: true});
-  function lobby(){console.clear();console.log('  _|_|    _|      _|  _|_|_|_|  _|_|_|    _|_|_|    _|_|_|      _|_|    _|      _|  _|_|_|    _|_|_|_|_|\n_|    _|  _|      _|  _|        _|    _|  _|    _|  _|    _|  _|    _|  _|_|  _|_|  _|    _|      _|    \n_|    _|  _|      _|  _|_|_|    _|_|_|    _|_|_|    _|_|_|    _|    _|  _|  _|  _|  _|_|_|        _|    \n_|    _|    _|  _|    _|        _|    _|  _|        _|    _|  _|    _|  _|      _|  _|            _|    \n  _|_|        _|      _|_|_|_|  _|    _|  _|        _|    _|    _|_|    _|      _|  _|            _|    \n');console.log('════════════════════════════════════╣ YOUTUBE MEDIA DOWNLOADER ╠════════════════════════════════════');console.log('\n\n')}
+  function lobby(){console.clear();console.log('\x1b[34m  _|_|    _|      _|  _|_|_|_|  _|_|_|    _|_|_|    _|_|_|      _|_|    _|      _|  _|_|_|    _|_|_|_|_|\n_|    _|  _|      _|  _|        _|    _|  _|    _|  _|    _|  _|    _|  _|_|  _|_|  _|    _|      _|    \n_|    _|  _|      _|  _|_|_|    _|_|_|    _|_|_|    _|_|_|    _|    _|  _|  _|  _|  _|_|_|        _|    \n_|    _|    _|  _|    _|        _|    _|  _|        _|    _|  _|    _|  _|      _|  _|            _|    \n  _|_|        _|      _|_|_|_|  _|    _|  _|        _|    _|    _|_|    _|      _|  _|            _|   \x1b[0m \n');console.log('\x1b[31m ════════════════════════════════════╣ YOUTUBE MEDIA DOWNLOADER ╠════════════════════════════════════ \x1b[0m');console.log('\n\n')}
   function phase1(link){  
   console.log('──────────────────────────────────────────────────────────────────╮');  
   console.log('   Insert the media link that you want to download                │');
@@ -234,7 +234,7 @@ lobby();
                     }
                     return [speed, value]
         }
-        function ytdlapi(link, pathv, format, quality){
+        function ytdlapi(link, pathv, format, quality, title){
           pathv = verifypath(pathv)
           confirm(link, format, quality, pathv);
           var video;
@@ -261,7 +261,7 @@ lobby();
                       else if(points === '.. .'){points = '...'}
                     var differencetime = (Date.now() - startTime);
                     const percentComplete = downloadedBytes / totalBytes * 100;
-                      speedynamic = (downloadedBytes / differencetime/1024); var value = 'Mb/s';
+                      speedynamic = (downloadedBytes / differencetime/1024/100); var value = 'Mb/s';
                     let speeddata = speedlistener(speedynamic, value)
                       speedynamic = speeddata[0]; value = speeddata[1];
                     process.stdout.write(`\rDownloading${points} ${percentComplete.toFixed(2)}%  |  (${speedynamic.toFixed(2)} ${value})`);
@@ -303,7 +303,7 @@ lobby();
                     process.stdout.cursorTo(0);
                     
                     // print download summary
-                    console.log(`\nDownloaded ${videoInfo.title} in ${timeTaken.toFixed(2)} ${unit} (avg speed: ${speed.toFixed(2)} ${value})\n`);
+                    console.log(`\n \x1b[32m Downloaded ${title} in ${timeTaken.toFixed(2)} ${unit} (avg speed: ${speed.toFixed(2)} ${value}) \x1b[0m \n`);
                     resolve();
                 });
             });
@@ -320,6 +320,11 @@ lobby();
     });
 }
 
+function mainressourcer (){
+  const timeoutId = setTimeout(() => {
+    console.log('Timeout expired, skipping search.');
+    return;
+  }, 5000);
           ytdl.getInfo(link)
           .then(vinfor => {
             vinfor = titleressourcer(vinfor.videoDetails.title);
@@ -329,7 +334,7 @@ lobby();
             else{
             pathv += vinfor + fileformat;
             console.log(vinfor);
-            ytdlapi(link, pathv, fileformat, quality);
+            ytdlapi(link, pathv, fileformat, quality, vinfor);
           }})
           .catch(e =>{
       console.log('╭───────────────────────────────────────────────────────────────────────────╮');
@@ -340,3 +345,7 @@ lobby();
       console.log('│                      YouTube media URL and try again.                     |');
       console.log('╰───────────────────────────────────────────────────────────────────────────╯');
           })
+          clearTimeout(timeoutId);
+}
+mainressourcer();
+        
