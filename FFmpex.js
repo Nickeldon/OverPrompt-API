@@ -2,38 +2,56 @@ const ytdl = require('ytdl-core');
 const ffmpeg = require('ffmpeg-static');
 const cp = require('child_process');
 const readline = require('readline');
-const fs = require('fs')
-const {lobby} = require('./Side_Functions/lobby')
 
 module.exports = {
-    ffmpex: async function ffmpex(link, title, path, AACENABLE){
+    ffmpex: async function ffmpex(link, title, path, TYPE){
+
+      //Summoning every variables
+      var eformat
+      var typeform
       let totaltime;
-      try{
+      var tracker;
+      var video;
+      var audio
+      var ffmpegProcess
+      var format
+
+      if(TYPE === 'FLACACTIVATE') {typeform = 1; eformat = '.flac'; format = 'flac'}
+      else if(TYPE === 'AACACTIVATE') {typeform = 2; eformat = '.aac'; format = 'aac'}
+      else if(TYPE === 'WAVACTIVATE') {typeform = 3; eformat = '.wav'; format = 'wav'}
+      else typeform = null
+
       
-    const tracker = {
+      try{
+        if(typeform){
+          tracker = {
+            start: Date.now(),
+            audio: { downloaded: 0, total: Infinity },
+            merged: { speed: '0x' },
+            };
+        }
+      
+        else{
+    tracker = {
       start: Date.now(),
       audio: { downloaded: 0, total: Infinity },
       video: { downloaded: 0, total: Infinity },
       merged: { frame: 0, speed: '0x', fps: 0 },
-    };
+    };}
     
     // Get audio and video streams
-    const audio = ytdl(link, { quality: 'highestaudio' })
+    audio = ytdl(link, { quality: 'highestaudio' })
       .on('progress', ( _, downloaded, total) => {
         tracker.audio = { downloaded, total };
       });
-      var video;
-      if(!AACENABLE){
+      
+      if(!typeform){
       video = ytdl(link, { quality: 'highestvideo' })
       .on('progress', (_, downloaded, total) => {
         tracker.video = { downloaded, total };
       });}
-      var eformat
-      //console.log(AACENABLE)
-    if(AACENABLE) eformat = '.aac'
-    else eformat = '.mkv'
-    //console.log(eformat)
-    //console.log(AACENABLE)
+
+    
     // Prepare the progress bar
     let progressbarHandle = null;
     const progressbarInterval = 1000;
@@ -43,12 +61,12 @@ module.exports = {
     
       process.stdout.write(`Audio  | ${(tracker.audio.downloaded / tracker.audio.total * 100).toFixed(2)}% processed `);
       process.stdout.write(`(${toMB(tracker.audio.downloaded)}MB of ${toMB(tracker.audio.total)}MB).${' '.repeat(10)}\n`);
-    if(!AACENABLE){
+    if(!typeform){
       process.stdout.write(`Video  | ${(tracker.video.downloaded / tracker.video.total * 100).toFixed(2)}% processed `);
       process.stdout.write(`(${toMB(tracker.video.downloaded)}MB of ${toMB(tracker.video.total)}MB).${' '.repeat(10)}\n`);
     }
       process.stdout.write(`Merged | processing frame ${tracker.merged.frame} `);
-      process.stdout.write(`(at ${tracker.merged.fps} fps => ${tracker.merged.speed}).${' '.repeat(10)}\n`);
+      process.stdout.write(`(at ${tracker.merged.speed}).${' '.repeat(10)}\n`);
     
       process.stdout.write(`running for: ${((Date.now() - tracker.start) / 1000 / 60).toFixed(2)} Minutes.`);
       readline.moveCursor(process.stdout, 0, -3);
@@ -56,22 +74,25 @@ module.exports = {
     };
     
     // Start the ffmpeg child process
-    if(!AACENABLE){const map = ''}
-    const ffmpegProcess = cp.spawn(ffmpeg, [
-      // Remove ffmpeg's console spamming
-      '-loglevel', '8', '-hide_banner',
-      // Redirect/Enable progress messages
-      '-progress', 'pipe:3',
-      // Set inputs
-      '-i', 'pipe:4',
-      '-i', 'pipe:5',
-      // Map audio & video from streams
-      '-map', '0:a',
-      '-map', '1:v',
-      // Keep encoding
-      '-c:v', 'copy',
-      // Define output file
-    '-b:v', '10M', '-y', `${path}/${title}${eformat}`,
+    
+    if(typeform){
+      ffmpegProcess = cp.spawn(ffmpeg, [
+        '-loglevel', '8', '-hide_banner','-progress', 'pipe:3', '-i', 'pipe:4', '-codec:a', 
+        `${format}`, '-b:v', '10M', '-b:a', '192k', '-y', `${path}/${title}${eformat}`], 
+        {
+        windowsHide: true,
+        stdio: [
+          /* Standard: stdin, stdout, stderr */
+          'inherit', 'inherit', 'inherit',
+          /* Custom: pipe:3, pipe:4, pipe:5 */
+          'pipe', 'pipe',
+        ],
+      });
+    }
+    else{
+      path = './Output/MKV'
+    ffmpegProcess = cp.spawn(ffmpeg, [
+      '-loglevel', '8', '-hide_banner', '-progress', 'pipe:3', '-i', 'pipe:4', '-i', 'pipe:5', '-map', '0:a', '-map', '1:v', '-c:v', 'copy', '-b:v', '10M', '-y', `${path}/${title}.mkv`,
     ], {
       windowsHide: true,
       stdio: [
@@ -80,13 +101,19 @@ module.exports = {
         /* Custom: pipe:3, pipe:4, pipe:5 */
         'pipe', 'pipe', 'pipe',
       ],
-    });
+    });}
     ffmpegProcess.on('close', () => {
       // Cleanup
+      if(totaltime){
       clearInterval(progressbarHandle);
-      process.stdout.write('\r\r\r\r\r\r\n');
+      
+      if(typeform) process.stdout.write('\r\r\r\r\r\n');
+      else process.stdout.write('\r\r\r\r\r\r\n');
+
       console.log('\r\r\n')
-      console.log(`\n \x1b[32mDownloaded ${title} in ${totaltime.toFixed(2)} seconds\x1b[0m \n`)
+      totaltime /= 1000
+      console.log(`\n \x1b[32mDownloaded ${title} in ${totaltime.toFixed(2)} seconds\x1b[0m \n`)}
+      else{console.error(`\n \x1b[32m Failed to Download ${title}\x1b[0m \n`)}
     });
     
     // Link streams
@@ -104,8 +131,11 @@ module.exports = {
       tracker.merged = args;
     });
     audio.pipe(ffmpegProcess.stdio[4]);
-    if(!AACENABLE){
-    video.pipe(ffmpegProcess.stdio[5]);}}catch(e){
+
+    if(!typeform){
+    video.pipe(ffmpegProcess.stdio[5]);}
+  
+  }catch(e){
       console.log(e)
       console.log('Error occured, exiting...')
     }
