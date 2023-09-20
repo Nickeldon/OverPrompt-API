@@ -180,12 +180,15 @@ function mainressourcer (link){
           ytdl.getInfo(link)
           .then(vinfor => {
             vinfor = titleressourcer(vinfor.videoDetails.title);
-            if(fileformat === '.mkv' || fileformat === '.aac' && quality === 'greatest'){
+            if(fileformat === '.mkv' || fileformat === '.aac' && quality === 'greatest' || fileformat === '.flac'){
               if(direction === 2) addfolder(abspath)
-              while (fs.existsSync('/' + abspath + '/' + vinfor + '.mkv')) console.log('EXISTS !!!'); vinfor += '(1)'
               console.clear()
               lobby()
               if(fileformat === '.mkv') AACENABLE = null
+              else if(fileformat === '.aac') AACENABLE = 'AACACTIVATE'
+              else if(fileformat === '.flac') AACENABLE = 'FLACACTIVATE'
+              else if(fileformat === '.wav') AACENABLE = 'WAVACTIATE'
+              console.log(fileformat)
               ffmpex(link, vinfor, abspath, AACENABLE).then(time => {
                 time *= 60
                 //console.log(`\n \x1b[32mDownloaded ${vinfor} in ${time.toFixed(2)} seconds\x1b[0m \n`)

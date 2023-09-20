@@ -10,13 +10,16 @@
         "start": "node main.js"
     },
     "dependencies": {
+        "@inquirer/select": "^1.2.11",
         "@nodegui/nodegui": "^0.59.2",
         "child_process": "^1.0.2",
         "cli-spinners": "^2.9.0",
         "ffmpeg-static": "^5.1.0",
+        "inquirer": "^9.2.11",
         "lodash": "^4.17.21",
         "ora": "^7.0.1",
         "prompt-sync": "^4.2.0",
+        "prompts": "^2.4.2",
         "speedtest-net": "^2.2.0",
         "ytdl-core": "^4.11.5",
         "ytpl": "^2.3.0"
