@@ -14,10 +14,21 @@ module.exports = {
 
     var dirname = Path();
     var filePath = dirname + '/playlist.json';
+    var pvinfor
+    
+try{
+    pvinfor = await ytpl(plink, {
+      limit: 100000000
+    })
+    console.log(pvinfor)
+    console.log(kdfjj)
+   }catch(e){
+    
+      console.log("PRIVATE/UNEXISTANT")
+   
+   }   //console.log(pvinfor.title);
 
-    const pvinfor = await ytpl(plink)
-      //console.log(pvinfor.title);
-
+   console.log(pvinfor)
       var jsontemp =  fs.readFileSync(filePath)
       var object = JSON.parse(jsontemp)
       
