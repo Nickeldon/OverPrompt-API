@@ -8,7 +8,6 @@
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-        
            module.exports ={   
 
             Path: function path(){
@@ -91,7 +90,7 @@
               try{video = ytdl(url, {quality: quality, filter: choice});}catch(error){
                 console.log(`\n \x1b[31m YTDL ERROR: Failed to download ${title} \x1b[0m \n`);
               }
-              const output = fs.createWriteStream(pathv);
+              const  output = fs.createWriteStream(pathv);
                 
                 // emit progress events
                 let downloadedBytes = 0;
@@ -179,17 +178,18 @@ function mainressourcer (link){
   }, 5000);
           ytdl.getInfo(link)
           .then(vinfor => {
+            var duration = vinfor.videoDetails.lengthSeconds
             vinfor = titleressourcer(vinfor.videoDetails.title);
-            if(fileformat === '.mkv' || fileformat === '.aac' && quality === 'greatest' || fileformat === '.flac'){
+            if(fileformat === '.mkv' || fileformat === '.aac' && quality === 'greatest' || fileformat === '.flac' || fileformat === '.wav'){
               if(direction === 2) addfolder(abspath)
               console.clear()
               lobby()
               if(fileformat === '.mkv') AACENABLE = null
               else if(fileformat === '.aac') AACENABLE = 'AACACTIVATE'
               else if(fileformat === '.flac') AACENABLE = 'FLACACTIVATE'
-              else if(fileformat === '.wav') AACENABLE = 'WAVACTIATE'
+              else if(fileformat === '.wav') AACENABLE = 'WAVACTIVATE'
               console.log(fileformat)
-              ffmpex(link, vinfor, abspath, AACENABLE).then(time => {
+              ffmpex(link, vinfor, abspath, AACENABLE, duration).then(time => {
                 time *= 60
                 //console.log(`\n \x1b[32mDownloaded ${vinfor} in ${time.toFixed(2)} seconds\x1b[0m \n`)
               })
@@ -199,6 +199,16 @@ function mainressourcer (link){
             ytdlapi(link, pathv, fileformat, quality, vinfor);
           }})
           .catch(e =>{
+            if(e.syscall === 'getaddrinfo'){
+      console.log('╭───────────────────────────────────────────────────────────────────────────╮');
+      console.log('│                                                                           |');
+      console.log('│        🌐 HOST ERROR: POOR/NON-EXISTANT INTERNET CONNECTIVITY! 🌐         │');        
+      console.log('│                                                                           |');
+      console.log('│                Please make sure you are properly connected                │');
+      console.log('│                     to internet or and try again later.                   |');
+      console.log('╰───────────────────────────────────────────────────────────────────────────╯');
+            }
+            else{
       console.log('╭───────────────────────────────────────────────────────────────────────────╮');
       console.log('│                                                                           |');
       console.log('│        ❌ MEDIA ERROR: INVALID/NON-EXISTANT YOUTUBE MEDIA URL! ❌         │');        
@@ -206,7 +216,8 @@ function mainressourcer (link){
       console.log('│                 Please make sure you entered an existant                  │');
       console.log('│                      YouTube media URL and try again.                     |');
       console.log('╰───────────────────────────────────────────────────────────────────────────╯');
-       })
+       }
+      })
           clearTimeout(timeoutId);
 }
 mainressourcer(link);
