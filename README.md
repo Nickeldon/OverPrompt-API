@@ -1,26 +1,50 @@
-                                     OVERPROMPT-API
-                                  MULTIMEDIA DOWNLOADER
-                                
-                                
-(Note: Youtube media downloader may take a lot of Data and space while piping your Youtube Media Link)                                
+  # OverPrompt-API Multimedia Downloader
 
+OverPrompt Logo
 
-==> Pre-requisites:
-    (1) Node.js (version 18 or newer)
-    (2) ffmpeg extension
-    (3) Vscode or similar
-    (4) yarn or npm
+Welcome to OverPrompt-API, a versatile multimedia downloader that simplifies the process of grabbing media from various sources, including YouTube. Please note that downloading media from YouTube may consume significant data and storage.
+## Prerequisites
 
-==> How to Install:
-    (1) Open Terminal and make sure to index the terminal to the OverPrompt directory
-    (2) Type 'yarn install' or 'npm i' depending on your configuration
-    (3) Now the program should be ready to go
+Make sure you have the following installed:
+
+•	Node.js (version 18 or newer)
+
+•	  FFmpeg extension
+
+•	  VSCode or a similar code editor
+
+•	  Yarn or npm
+
+  ## Installation
+
+Open your terminal and navigate to the OverPrompt directory.
+Run the following command based on your configuration:
+
+    `yarn install`
+
+Or
+
+    `npm install`
+  
+The program is now ready to use.
     
-==> How to start the program:
-    (1) In your terminal, type 'node .' or 'node main.js' to start the script
-    (2) When asked, paste the YouTube link from which you want the media to be downloaded
-    (3) Enter the Fileformat of your choice (Possibilities: '.mkv', '.mp4', '.mp3'
-    (4) Enter the Quality you want your media to be downloaded (Possibilities: 'low', 'high', 'Greatest'
 
 
-(FINAL STEP): Enjoy your media!
+## Getting Started
+
+Start the program by running the following command in your terminal:
+    `node .`
+or
+    `node main.js` 
+
+When prompted, paste the YouTube link from which you want to download the media.
+Enter the file format of your choice (e.g., '.mkv', '.mp4', '.mp3').
+Choose the quality for your downloaded media: 'low', 'high', or 'Greatest'.
+
+**Enjoy Your Media!**
+
+Congratulations! You've successfully downloaded your media using OverPrompt-API. Sit back, relax, and enjoy the content you've just acquired.
+
+Feel free to explore additional features and options within the program to enhance your multimedia experience. For any issues or feedback, please refer to our GitHub Issues section.
+
+**Happy downloading! 🚀**
